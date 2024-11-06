@@ -12,3 +12,19 @@ This project involves creating a Bluetooth-controlled robotic bot powered by an 
 - **Power Management**: Ensuring the 3S battery's voltage is stable enough for consistent motor performance.
 - **Signal Delay**: Although minimized in the code, wireless communication may occasionally introduce minor latency.
 - **Wiring & Heat Dissipation**: Properly managing wiring to avoid short circuits and ensuring the L298N motor driver remains cool to prevent overheating.
+
+app used:Arduino Bluetooth Controller
+
+How to Set Up the App with This Code:
+Download and connect to the HC-05 module via the Arduino Bluetooth Controller app.
+Go to Controller Mode and set up each button with the corresponding character:
+Forward button → Send "F"
+Backward button → Send "B"
+Left button → Send "L"
+Right button → Send "R"
+Increase Speed button → Send "U"
+Decrease Speed button → Send "D"
+Key Features of This Code:
+Direction Control: Moves in forward, backward, left, and right directions.
+Speed Control: Increase and decrease speed with U and D commands.
+No Input Lag: Code executes instantly as it receives commands from Bluetooth.
