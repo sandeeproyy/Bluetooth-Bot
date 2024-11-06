@@ -1,84 +1,90 @@
-// Motor Control Pins
+#include <SoftwareSerial.h>
+
+SoftwareSerial BTSerial(2, 3); // RX, TX pins for HC-05
+
+// Motor control pins
 #define IN1 7
 #define IN2 6
 #define IN3 5
 #define IN4 4
-#define EN1 9  // Motor 1 speed control (PWM)
-#define EN2 10 // Motor 2 speed control (PWM)
+#define EN1 9
+#define EN2 10
 
-// Bluetooth Input Variables
-char command;
+int speedValue = 255; // Initial motor speed (0-255)
 
 void setup() {
-  // Motor Control Pins as Outputs
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
   pinMode(EN1, OUTPUT);
   pinMode(EN2, OUTPUT);
-  
-  // Initialize Serial for Bluetooth Communication
-  Serial.begin(9600);
+
+  BTSerial.begin(9600); // Start Bluetooth communication
+  Serial.begin(9600);   // For debugging
 }
 
 void loop() {
-  // Check if data is available on Serial (Bluetooth)
-  if (Serial.available() > 0) {
-    command = Serial.read(); // Read the incoming command
+  if (BTSerial.available()) {
+    char command = BTSerial.read();
+    Serial.println(command); // For debugging
 
     switch (command) {
-      case 'F': // Forward
-        moveForward(255);
+      case 'F':
+        moveForward();
         break;
-      case 'B': // Backward
-        moveBackward(255);
+      case 'B':
+        moveBackward();
         break;
-      case 'L': // Left
-        turnLeft(255);
+      case 'L':
+        turnLeft();
         break;
-      case 'R': // Right
-        turnRight(255);
+      case 'R':
+        turnRight();
         break;
-      case 'S': // Stop
+      case 'U':
+        increaseSpeed();
+        break;
+      case 'D':
+        decreaseSpeed();
+        break;
+      default:
         stopMotors();
         break;
     }
   }
 }
 
-// Motor Control Functions
-
-void moveForward(int speed) {
-  analogWrite(EN1, speed);
-  analogWrite(EN2, speed);
+void moveForward() {
+  analogWrite(EN1, speedValue);
+  analogWrite(EN2, speedValue);
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW);
 }
 
-void moveBackward(int speed) {
-  analogWrite(EN1, speed);
-  analogWrite(EN2, speed);
+void moveBackward() {
+  analogWrite(EN1, speedValue);
+  analogWrite(EN2, speedValue);
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, HIGH);
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, HIGH);
 }
 
-void turnLeft(int speed) {
-  analogWrite(EN1, speed / 2); // Reduce speed for turning
-  analogWrite(EN2, speed);
+void turnLeft() {
+  analogWrite(EN1, speedValue);
+  analogWrite(EN2, speedValue);
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, HIGH);
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW);
 }
 
-void turnRight(int speed) {
-  analogWrite(EN1, speed);
-  analogWrite(EN2, speed / 2); // Reduce speed for turning
+void turnRight() {
+  analogWrite(EN1, speedValue);
+  analogWrite(EN2, speedValue);
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
   digitalWrite(IN3, LOW);
@@ -86,10 +92,22 @@ void turnRight(int speed) {
 }
 
 void stopMotors() {
-  analogWrite(EN1, 0);
-  analogWrite(EN2, 0);
+  digitalWrite(EN1, LOW);
+  digitalWrite(EN2, LOW);
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, LOW);
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, LOW);
+}
+
+void increaseSpeed() {
+  speedValue = min(255, speedValue + 10); // Cap at 255
+  Serial.print("Speed increased to: ");
+  Serial.println(speedValue);
+}
+
+void decreaseSpeed() {
+  speedValue = max(0, speedValue - 10); // Bottom at 0
+  Serial.print("Speed decreased to: ");
+  Serial.println(speedValue);
 }
