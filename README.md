@@ -1,4 +1,4 @@
-# HC_05_Racebot
+# Bluetooth-Bot
 a race bot controlled by arduino and hc-05 module via bluetooth
 This project involves creating a Bluetooth-controlled robotic bot powered by an Arduino Uno, using a 3S LiPo battery, an HC-05 Bluetooth module, an L298N motor driver, and two 12V 200 RPM geared DC motors. The bot can move forward, backward, left, and right with speed control, which is managed by commands sent from a mobile app or other Bluetooth-enabled device. 
 
